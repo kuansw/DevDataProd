@@ -2,6 +2,7 @@
 # Developing Data Products - Course Project Submission
 
 This Course Project consists of two parts:
+
 1. A ShinyApp called LBW_Prediction for predicting Low Birth Weight
 2. A R Presentation pitching the LBW_Prediction App.
 
