@@ -1,0 +1,105 @@
+A Web-based Prediction Tool for Low Birth Weight in Infants
+========================================================
+author: Kuan Siew Weng 
+date: 20 July 2015
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
+Why Predict Low Birth Weight in Infants ?
+========================================================
+class: small-code
+
+- <small> Low birth weight (LBW) is defined as a birth weight of a liveborn infant of 
+less than 2,500 grams regardless of gestational age.</small>
+- <small>Key risk factors associated with an expectant mother that may contribute to LBW in her 
+infant include her young age, ethnicity, weight, past histories of multiple 
+pregnancies, premature labours, illness, heart disease or hypertension, 
+and uterine irritations as well as socio-behavioral factors 
+such as smoking, drug addiction, alcohol abuse.</small>
+- <small>LBW is closely associated with a higher risk of infant and childhood mortality, 
+inhibited growth and cognitive development, and chronic diseases later in life.</small>
+- <small>We decided to develop a simple web-based tool that predicts the low birth weight
+in infants which can be used by healthcare providers to develop early intervention and 
+support programs to help families with LBW babies.</small>
+
+
+Training Data for LBW Prediction
+========================================================
+class: small-code
+- <small>Our Prediction Tool was trained with data extracted from 
+the **birthwt** dataset, provided in the MASS R library package.</small>
+- <small>The plots show how a mother's key risk factors correlate to her 
+infant's birth weight in this training dataset, with the LBW threshold of 
+2500g highlighted in red.
+</small>
+```{r, echo=FALSE, dpi=300, out.width="750px", out.height="450px", fig.align="center"}
+library(MASS)
+bwt_df <- with(birthwt, {
+    race <- factor(race, labels = c("White", "Black", "Others"))
+    ftv <- factor(ftv)
+    levels(ftv)[-(1:2)] <- "2+"
+    data.frame(low=factor(low), bwt, age, lwt, race, smoke = (smoke > 0),
+               ptd = (ptl > 0), ht = (ht > 0), ui = (ui > 0))
+})
+
+par(mfcol=c(2,3))
+plot(bwt_df$lwt/2.2046, bwt_df$bwt, col=bwt_df$low, xlab="Mother's Last Menstrual Period Weight(kg)", ylab="Birth Weight(g)")
+z <- lm(bwt ~ lwt, data=bwt_df)
+abline(z, col="blue", lwd=4)
+
+plot(bwt_df$age,bwt_df$bwt, col=bwt_df$low, xlab="Mother's Age(Years)", ylab="Birth Weight(g)")
+z <- lm(bwt ~ age, data=bwt_df)
+abline(z, col="blue", lwd=4)
+
+boxplot(bwt_df$bwt ~ bwt_df$ui, xlab="Past History of Uterine Irritation", ylab="Birth Weight(g)")
+abline(h=2500,col="red", lwd=4)
+
+boxplot(bwt_df$bwt ~ bwt_df$ptd, xlab="Past History of Premature Labour", ylab="Birth Weight(g)")
+abline(h=2500,col="red", lwd=4)
+
+boxplot(bwt_df$bwt ~ bwt_df$ht, xlab="Past History of Hypertension", ylab="Birth Weight(g)")
+abline(h=2500,col="red", lwd=4)
+
+boxplot(bwt_df$bwt ~ bwt_df$smoke, xlab="Smoked During Pregnancy", ylab="Birth Weight(g)")
+abline(h=2500,col="red", lwd=4)
+```
+
+Regression Models for LBW Prediction
+========================================================
+class: small-code
+- <small>Machine learning techniques for solving regression problems can be applied for predicting 
+infant birth weight and hence the risk of LBW.</small>
+- <small>For our LBW Prediction Tool, we fitted our training dataset to the two popular machine learning algorithms for regression and classification, **Random Forest (rf)** and **Gradient Boosted Model (gbm)**.</small>
+```{r eval=FALSE}
+training <- with(birthwt, {
+    race <- factor(race, labels = c("White", "Black", "Others"))
+    ftv <- factor(ftv)
+    levels(ftv)[-(1:2)] <- "2+"
+    data.frame(bwt, age, lwt, race, smoke = (smoke > 0),
+               ptd = (ptl > 0), ht = (ht > 0), ui = (ui > 0))
+})
+
+set.seed(62433)
+trc=trainControl(method="cv", number=3)
+
+rf_fit <- train(bwt ~ ., data=training, method="rf", trControl=trc, verbose=FALSE)
+gbm_fit <- train(bwt ~ ., data=training, method="gbm", trControl=trc, verbose=FALSE)
+```
+
+
+Using the LBW Prediction Tool
+====================================
+class: small-code
+
+- <small> This simple-to-use LBW Prediction Tool has now been deployed as a ShinyApp,
+running under RStudio's app-hosting service.</small>
+- <small> Click on this URL
+<[LBW Prediction Tool](https://kuansw.shinyapps.io/DDP_Project)> &nbsp; to try it out!</small>
+<div style="width:720px; height=480px">
+![Image](Screen_Shot.png)
+</div>
+  
+
