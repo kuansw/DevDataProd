@@ -22,20 +22,19 @@ such as smoking, drug addiction, alcohol abuse.</small>
 - <small>LBW is closely associated with a higher risk of infant and childhood mortality, 
 inhibited growth and cognitive development, and chronic diseases later in life.</small>
 - <small>We decided to develop a simple web-based tool that predicts the low birth weight
-in infants which can be used by healthcare providers to develop early intervention and 
+in infants, which can be used by healthcare providers to develop early intervention and 
 support programs to help families with LBW babies.</small>
 
 
 Training Data for LBW Prediction
 ========================================================
 class: small-code
-- <small>Our Prediction Tool was trained with data extracted from 
-the **birthwt** dataset, provided in the MASS R library package.</small>
-- <small>The plots show how a mother's key risk factors correlate to her 
-infant's birth weight in this training dataset, with the LBW threshold of 
-2500g highlighted in red.
+- <small>A 1986 study into LBW conducted at Baystate Medical Center, Mass, provides the 
+dataset for our investigation and model training.</small>
+- <small>The following plots of this dataset show the correlation of a mother's key risk factors such age, weight, hypertension, uterine irritation, premature labours, smoking to her 
+infant's birth weight.
 </small>
-```{r, echo=FALSE, dpi=300, out.width="750px", out.height="450px", fig.align="center"}
+```{r, echo=FALSE, dpi=300, out.width="750px", out.height="420px", fig.align="center"}
 library(MASS)
 bwt_df <- with(birthwt, {
     race <- factor(race, labels = c("White", "Black", "Others"))
@@ -46,21 +45,21 @@ bwt_df <- with(birthwt, {
 })
 
 par(mfcol=c(2,3))
-plot(bwt_df$lwt/2.2046, bwt_df$bwt, col=bwt_df$low, xlab="Mother's Last Menstrual Period Weight(kg)", ylab="Birth Weight(g)")
+plot(bwt_df$lwt/2.2046, bwt_df$bwt, col=bwt_df$low, xlab="Mother's Weight at Last Period Weight (kg)", ylab="Birth Weight (g)")
 z <- lm(bwt ~ lwt, data=bwt_df)
 abline(z, col="blue", lwd=4)
 
-plot(bwt_df$age,bwt_df$bwt, col=bwt_df$low, xlab="Mother's Age(Years)", ylab="Birth Weight(g)")
+plot(bwt_df$age,bwt_df$bwt, col=bwt_df$low, xlab="Mother's Age(Years)", ylab="Birth Weight (g)")
 z <- lm(bwt ~ age, data=bwt_df)
 abline(z, col="blue", lwd=4)
 
-boxplot(bwt_df$bwt ~ bwt_df$ui, xlab="Past History of Uterine Irritation", ylab="Birth Weight(g)")
+boxplot(bwt_df$bwt ~ bwt_df$ui, xlab="Past History of Uterine Irritation", ylab="Birth Weight (g)")
 abline(h=2500,col="red", lwd=4)
 
-boxplot(bwt_df$bwt ~ bwt_df$ptd, xlab="Past History of Premature Labour", ylab="Birth Weight(g)")
+boxplot(bwt_df$bwt ~ bwt_df$ptd, xlab="Past History of Premature Labour", ylab="Birth Weight (g)")
 abline(h=2500,col="red", lwd=4)
 
-boxplot(bwt_df$bwt ~ bwt_df$ht, xlab="Past History of Hypertension", ylab="Birth Weight(g)")
+boxplot(bwt_df$bwt ~ bwt_df$ht, xlab="Past History of Hypertension", ylab="Birth Weight (g)")
 abline(h=2500,col="red", lwd=4)
 
 boxplot(bwt_df$bwt ~ bwt_df$smoke, xlab="Smoked During Pregnancy", ylab="Birth Weight(g)")
